@@ -197,269 +197,236 @@ export class UIExampleFactory {
       ?.classList.add("makeItRed");
   }
 
-  @example
-  static registerRightClickMenuItem() {
-    const menuIcon = `chrome://${config.addonRef}/content/icons/favicon@0.5x.png`;
-    // item menuitem with icon
-    ztoolkit.Menu.register("item", {
-      tag: "menuitem",
-      id: "zotero-itemmenu-addontemplate-test",
-      label: getString("menuitem.label"),
-      commandListener: (ev) => addon.hooks.onDialogEvents("dialogExample"),
-      icon: menuIcon,
-    });
-  }
+  // @example
+  // static async registerExtraColumn() {
+  //   await ztoolkit.ItemTree.register(
+  //     "test1",
+  //     "text column",
+  //     (
+  //       field: string,
+  //       unformatted: boolean,
+  //       includeBaseMapped: boolean,
+  //       item: Zotero.Item
+  //     ) => {
+  //       return field + String(item.id);
+  //     },
+  //     {
+  //       iconPath: "chrome://zotero/skin/cross.png",
+  //     }
+  //   );
+  // }
 
-  @example
-  static registerRightClickMenuPopup() {
-    ztoolkit.Menu.register(
-      "item",
-      {
-        tag: "menu",
-        label: getString("menupopup.label"),
-        children: [
-          {
-            tag: "menuitem",
-            label: getString("menuitem.submenulabel"),
-            oncommand: "alert('Hello World! Sub Menuitem.')",
-          },
-        ],
-      },
-      "before",
-      document.querySelector(
-        "#zotero-itemmenu-addontemplate-test"
-      ) as XUL.MenuItem
-    );
-  }
+  // @example
+  // static async registerExtraColumnWithCustomCell() {
+  //   await ztoolkit.ItemTree.register(
+  //     "test2",
+  //     "custom column",
+  //     (
+  //       field: string,
+  //       unformatted: boolean,
+  //       includeBaseMapped: boolean,
+  //       item: Zotero.Item
+  //     ) => {
+  //       return String(item.id);
+  //     },
+  //     {
+  //       renderCellHook(index, data, column) {
+  //         const span = document.createElementNS(
+  //           "http://www.w3.org/1999/xhtml",
+  //           "span"
+  //         );
+  //         ztoolkit.log("nihaowoshityds");
+  //         span.style.background = "#0dd068";
+  //         span.innerText = "⭐" + data;
+  //         return span;
+  //       },
+  //     }
+  //   );
+  // }
 
-  @example
-  static registerWindowMenuWithSeparator() {
-    ztoolkit.Menu.register("menuFile", {
-      tag: "menuseparator",
-    });
-    // menu->File menuitem
-    ztoolkit.Menu.register("menuFile", {
-      tag: "menuitem",
-      label: getString("menuitem.filemenulabel"),
-      oncommand: "alert('Hello World! File Menuitem.')",
-    });
-  }
+  // @example
+  // static async registerCustomCellRenderer() {
+  //   await ztoolkit.ItemTree.addRenderCellHook(
+  //     "title",
+  //     (index: number, data: string, column: any, original: Function) => {
+  //       const span = original(index, data, column) as HTMLSpanElement;
+  //       span.style.background = "rgb(30, 30, 30)";
+  //       span.style.color = "rgb(156, 220, 240)";
+  //       return span;
+  //     }
+  //   );
+  //   await ztoolkit.ItemTree.refresh();
+  // }
 
-  @example
-  static async registerExtraColumn() {
-    await ztoolkit.ItemTree.register(
-      "test1",
-      "text column",
-      (
-        field: string,
-        unformatted: boolean,
-        includeBaseMapped: boolean,
-        item: Zotero.Item
-      ) => {
-        return field + String(item.id);
-      },
-      {
-        iconPath: "chrome://zotero/skin/cross.png",
-      }
-    );
-  }
+  // @example
+  // static async registerCustomItemBoxRow() {
+  //   await ztoolkit.ItemBox.register(
+  //     "itemBoxFieldEditable",
+  //     "Editable Custom Field",
+  //     (field, unformatted, includeBaseMapped, item, original) => {
+  //       return (
+  //         ztoolkit.ExtraField.getExtraField(item, "itemBoxFieldEditable") || ""
+  //       );
+  //     },
+  //     {
+  //       editable: true,
+  //       setFieldHook: (field, value, loadIn, item, original) => {
+  //         window.alert("Custom itemBox value is changed and saved to extra!");
+  //         ztoolkit.ExtraField.setExtraField(
+  //           item,
+  //           "itemBoxFieldEditable",
+  //           value
+  //         );
+  //         return true;
+  //       },
+  //       index: 1,
+  //     }
+  //   );
 
-  @example
-  static async registerExtraColumnWithCustomCell() {
-    await ztoolkit.ItemTree.register(
-      "test2",
-      "custom column",
-      (
-        field: string,
-        unformatted: boolean,
-        includeBaseMapped: boolean,
-        item: Zotero.Item
-      ) => {
-        return String(item.id);
-      },
-      {
-        renderCellHook(index, data, column) {
-          const span = document.createElementNS(
-            "http://www.w3.org/1999/xhtml",
-            "span"
-          );
-          span.style.background = "#0dd068";
-          span.innerText = "⭐" + data;
-          return span;
-        },
-      }
-    );
-  }
+  //   await ztoolkit.ItemBox.register(
+  //     "itemBoxFieldNonEditable",
+  //     "Non-Editable Custom Field",
+  //     (field, unformatted, includeBaseMapped, item, original) => {
+  //       return (
+  //         "[CANNOT EDIT THIS]" + (item.getField("title") as string).slice(0, 10)
+  //       );
+  //     },
+  //     {
+  //       editable: false,
+  //       index: 2,
+  //     }
+  //   );
+  // }
 
-  @example
-  static async registerCustomCellRenderer() {
-    await ztoolkit.ItemTree.addRenderCellHook(
-      "title",
-      (index: number, data: string, column: any, original: Function) => {
-        const span = original(index, data, column) as HTMLSpanElement;
-        span.style.background = "rgb(30, 30, 30)";
-        span.style.color = "rgb(156, 220, 240)";
-        return span;
-      }
-    );
-    await ztoolkit.ItemTree.refresh();
-  }
+  // @example
+  // static registerLibraryTabPanel() {
+  //   const tabId = ztoolkit.LibraryTabPanel.register(
+  //     getString("tabpanel.lib.tab.label"),
+  //     (panel: XUL.Element, win: Window) => {
+  //       const elem = ztoolkit.UI.createElement(win.document, "vbox", {
+  //         children: [
+  //           {
+  //             tag: "h2",
+  //             properties: {
+  //               innerText: "Hello World!",
+  //             },
+  //           },
+  //           {
+  //             tag: "div",
+  //             properties: {
+  //               innerText: "This is a library tab.",
+  //             },
+  //           },
+  //           {
+  //             tag: "button",
+  //             namespace: "html",
+  //             properties: {
+  //               innerText: "Unregister",
+  //             },
+  //             listeners: [
+  //               {
+  //                 type: "click",
+  //                 listener: () => {
+  //                   ztoolkit.LibraryTabPanel.unregister(tabId);
+  //                 },
+  //               },
+  //             ],
+  //           },
+  //         ],
+  //       });
+  //       panel.append(elem);
+  //     },
+  //     {
+  //       targetIndex: 1,
+  //     }
+  //   );
+  // }
 
-  @example
-  static async registerCustomItemBoxRow() {
-    await ztoolkit.ItemBox.register(
-      "itemBoxFieldEditable",
-      "Editable Custom Field",
-      (field, unformatted, includeBaseMapped, item, original) => {
-        return (
-          ztoolkit.ExtraField.getExtraField(item, "itemBoxFieldEditable") || ""
-        );
-      },
-      {
-        editable: true,
-        setFieldHook: (field, value, loadIn, item, original) => {
-          window.alert("Custom itemBox value is changed and saved to extra!");
-          ztoolkit.ExtraField.setExtraField(
-            item,
-            "itemBoxFieldEditable",
-            value
-          );
-          return true;
-        },
-        index: 1,
-      }
-    );
-
-    await ztoolkit.ItemBox.register(
-      "itemBoxFieldNonEditable",
-      "Non-Editable Custom Field",
-      (field, unformatted, includeBaseMapped, item, original) => {
-        return (
-          "[CANNOT EDIT THIS]" + (item.getField("title") as string).slice(0, 10)
-        );
-      },
-      {
-        editable: false,
-        index: 2,
-      }
-    );
-  }
-
-  @example
-  static registerLibraryTabPanel() {
-    const tabId = ztoolkit.LibraryTabPanel.register(
-      getString("tabpanel.lib.tab.label"),
-      (panel: XUL.Element, win: Window) => {
-        const elem = ztoolkit.UI.createElement(win.document, "vbox", {
-          children: [
-            {
-              tag: "h2",
-              properties: {
-                innerText: "Hello World!",
-              },
-            },
-            {
-              tag: "div",
-              properties: {
-                innerText: "This is a library tab.",
-              },
-            },
-            {
-              tag: "button",
-              namespace: "html",
-              properties: {
-                innerText: "Unregister",
-              },
-              listeners: [
-                {
-                  type: "click",
-                  listener: () => {
-                    ztoolkit.LibraryTabPanel.unregister(tabId);
-                  },
-                },
-              ],
-            },
-          ],
-        });
-        panel.append(elem);
-      },
-      {
-        targetIndex: 1,
-      }
-    );
-  }
-
-  @example
-  static async registerReaderTabPanel() {
-    const tabId = await ztoolkit.ReaderTabPanel.register(
-      getString("tabpanel.reader.tab.label"),
-      (
-        panel: XUL.TabPanel | undefined,
-        deck: XUL.Deck,
-        win: Window,
-        reader: _ZoteroTypes.ReaderInstance
-      ) => {
-        if (!panel) {
-          ztoolkit.log(
-            "This reader do not have right-side bar. Adding reader tab skipped."
-          );
-          return;
-        }
-        ztoolkit.log(reader);
-        const elem = ztoolkit.UI.createElement(win.document, "vbox", {
-          id: `${config.addonRef}-${reader._instanceID}-extra-reader-tab-div`,
-          // This is important! Don't create content for multiple times
-          // ignoreIfExists: true,
-          removeIfExists: true,
-          children: [
-            {
-              tag: "h2",
-              properties: {
-                innerText: "Hello World!",
-              },
-            },
-            {
-              tag: "div",
-              properties: {
-                innerText: "This is a reader tab.",
-              },
-            },
-            {
-              tag: "div",
-              properties: {
-                innerText: `Reader: ${reader._title.slice(0, 20)}`,
-              },
-            },
-            {
-              tag: "div",
-              properties: {
-                innerText: `itemID: ${reader.itemID}.`,
-              },
-            },
-            {
-              tag: "button",
-              namespace: "html",
-              properties: {
-                innerText: "Unregister",
-              },
-              listeners: [
-                {
-                  type: "click",
-                  listener: () => {
-                    ztoolkit.ReaderTabPanel.unregister(tabId);
-                  },
-                },
-              ],
-            },
-          ],
-        });
-        panel.append(elem);
-      },
-      {
-        targetIndex: 1,
-      }
-    );
-  }
+  // @example
+  // static async registerReaderTabPanel() {
+  //   const tabId = await ztoolkit.ReaderTabPanel.register(
+  //     getString("tabpanel.reader.tab.label"),
+  //     (
+  //       panel: XUL.TabPanel | undefined,
+  //       deck: XUL.Deck,
+  //       win: Window,
+  //       reader: _ZoteroTypes.ReaderInstance
+  //     ) => {
+  //       if (!panel) {
+  //         ztoolkit.log(
+  //           "This reader do not have right-side bar. Adding reader tab skipped."
+  //         );
+  //         return;
+  //       }
+  //       const elem = ztoolkit.UI.createElement(win.document, "vbox", {
+  //         id: `${config.addonRef}-${reader._instanceID}-extra-reader-tab-div`,
+  //         // This is important! Don't create content for multiple times
+  //         // ignoreIfExists: true,
+  //         removeIfExists: true,
+  //         children: [
+  //           {
+  //             tag: "h2",
+  //             properties: {
+  //               innerText: "A Translator Tab Test",
+  //             },
+  //           },
+  //           {
+  //             tag: "textbox",
+  //             properties: {
+  //               placeholder: "输入文本",
+  //             },
+  //             attributes:{
+  //               rows:3,
+  //             },
+  //           },
+  //           {
+  //             tag: "div",
+  //             id:`${config.addonRef}-${reader._instanceID}-extra-reader-tab-div-translate`,
+  //             children:[
+  //               {
+  //                 tag:"div",
+  //                 properties:{
+  //                   innerText:"芝士翻译"
+  //                 }
+  //               },
+  //               { 
+  //                 tag:"div",
+  //                 properties:{
+  //                   innerText:"芝士翻译结果"
+  //                 }
+  //               },
+  //             ],
+  //           },
+  //           {
+  //             tag: "div",
+  //             properties: {
+  //               innerText: `itemID: ${reader.itemID}.`,
+  //             },
+  //           },
+  //           {
+  //             tag: "button",
+  //             namespace: "html",
+  //             properties: {
+  //               innerText: "Unregister",
+  //             },
+  //             listeners: [
+  //               {
+  //                 type: "click",
+  //                 listener: () => {
+  //                   ztoolkit.ReaderTabPanel.unregister(tabId);
+  //                 },
+  //               },
+  //             ],
+  //           },
+  //         ],
+  //       });
+  //       panel.append(elem);
+  //     },
+  //     {
+  //       targetIndex: 1,
+  //     }
+  //   );
+  // }
 }
 
 export class PromptExampleFactory {

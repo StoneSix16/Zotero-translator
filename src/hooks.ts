@@ -5,9 +5,11 @@ import {
   PromptExampleFactory,
   UIExampleFactory,
 } from "./modules/examples";
+import { ReaderTabPenelFactory } from "./modules/readerTabPanel";
 import { config } from "../package.json";
 import { getString, initLocale } from "./modules/locale";
 import { registerPrefsScripts } from "./modules/preferenceScript";
+import { ReaderFactory } from "./modules/reader";
 
 async function onStartup() {
   await Promise.all([
@@ -46,23 +48,19 @@ async function onStartup() {
 
   UIExampleFactory.registerStyleSheet();
 
-  UIExampleFactory.registerRightClickMenuItem();
+  // await UIExampleFactory.registerExtraColumn();
 
-  UIExampleFactory.registerRightClickMenuPopup();
+  // await UIExampleFactory.registerExtraColumnWithCustomCell();
 
-  UIExampleFactory.registerWindowMenuWithSeparator();
+  // await UIExampleFactory.registerCustomCellRenderer();
 
-  await UIExampleFactory.registerExtraColumn();
+  // await UIExampleFactory.registerCustomItemBoxRow();
 
-  await UIExampleFactory.registerExtraColumnWithCustomCell();
+  // UIExampleFactory.registerLibraryTabPanel();
 
-  await UIExampleFactory.registerCustomCellRenderer();
-
-  await UIExampleFactory.registerCustomItemBoxRow();
-
-  UIExampleFactory.registerLibraryTabPanel();
-
-  await UIExampleFactory.registerReaderTabPanel();
+  await ReaderTabPenelFactory.registerReaderTabPanel();
+  
+  ReaderFactory.registerReaderInitializer();
 
   PromptExampleFactory.registerNormalCommandExample();
 
@@ -165,6 +163,12 @@ function onDialogEvents(type: string) {
   }
 }
 
+function onReaderTextSelection(readerInstance: _ZoteroTypes.ReaderInstance){
+  const selection = ztoolkit.Reader.getSelectedText(readerInstance);
+  ztoolkit.log(selection);
+  ztoolkit.log(_globalThis.document);
+}
+
 // Add your hooks here. For element click, etc.
 // Keep in mind hooks only do dispatch. Don't add code that does real jobs in hooks.
 // Otherwise the code would be hard to read and maintian.
@@ -176,4 +180,5 @@ export default {
   onPrefsEvent,
   onShortcuts,
   onDialogEvents,
+  onReaderTextSelection,
 };
