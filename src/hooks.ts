@@ -5,11 +5,12 @@ import {
   PromptExampleFactory,
   UIExampleFactory,
 } from "./modules/examples";
-import { ReaderTabPenelFactory } from "./modules/readerTabPanel";
+import { registerReaderTabPanel } from "./modules/readerTabPanel";
 import { config } from "../package.json";
 import { getString, initLocale } from "./modules/locale";
 import { registerPrefsScripts } from "./modules/preferenceScript";
 import { ReaderFactory } from "./modules/reader";
+import { ElementProps } from "zotero-plugin-toolkit/dist/tools/ui";
 
 async function onStartup() {
   await Promise.all([
@@ -58,7 +59,7 @@ async function onStartup() {
 
   // UIExampleFactory.registerLibraryTabPanel();
 
-  await ReaderTabPenelFactory.registerReaderTabPanel();
+  await registerReaderTabPanel();
   
   ReaderFactory.registerReaderInitializer();
 
@@ -166,8 +167,9 @@ function onDialogEvents(type: string) {
 function onReaderTextSelection(readerInstance: _ZoteroTypes.ReaderInstance){
   const selection = ztoolkit.Reader.getSelectedText(readerInstance);
   ztoolkit.log(selection);
-  ztoolkit.log(_globalThis.document);
-}
+  const con = readerInstance._window?.document.querySelector(`#${config.addonRef}-${readerInstance._instanceID}-extra-reader-tab`);
+  let p = con?.getElementsByClassName("raw-input")[0] as HTMLTextAreaElement;
+  p.value = selection;}
 
 // Add your hooks here. For element click, etc.
 // Keep in mind hooks only do dispatch. Don't add code that does real jobs in hooks.

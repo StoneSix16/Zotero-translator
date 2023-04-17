@@ -1,8 +1,8 @@
+import ZoteroToolkit from "zotero-plugin-toolkit";
 import { config } from "../../package.json";
 import { getString } from "./locale";
 
-export class ReaderTabPenelFactory {
-  static async registerReaderTabPanel() {
+export async function registerReaderTabPanel() {
     const tabId = await ztoolkit.ReaderTabPanel.register(
       getString("tabpanel.reader.tab.label"),
       (
@@ -18,29 +18,39 @@ export class ReaderTabPenelFactory {
           return;
         }
         const elem = ztoolkit.UI.createElement(win.document, "vbox", {
-          id: `${config.addonRef}-${reader._instanceID}-extra-reader-tab-div`,
+          id: `${config.addonRef}-${reader._instanceID}-extra-reader-tab`,
           // This is important! Don't create content for multiple times
           // ignoreIfExists: true,
+          styles:{
+            padding:"5px 10px 10px 5px",
+          },
+          attributes: {
+            flex: "1",
+            align: "stretch",
+          },
           removeIfExists: true,
           children: [
             {
               tag: "h2",
               properties: {
-                innerText: "A Translator Tab Test",
+                innerText: "A Translator Tab Testttttt",
               },
             },
             {
-              tag: "textbox",
+              tag: "textarea",
+              classList:[
+                "raw-input"
+              ],
               properties: {
                 placeholder: "输入文本",
               },
               attributes: {
-                rows: 3,
+                height:"fit-content"
               },
             },
             {
               tag: "div",
-              id: `${config.addonRef}-${reader._instanceID}-extra-reader-tab-div-translate`,
+              id: `${config.addonRef}-${reader._instanceID}-extra-reader-tab-translate`,
               children: [
                 {
                   tag: "div",
@@ -86,4 +96,3 @@ export class ReaderTabPenelFactory {
       }
     );
   }
-}
