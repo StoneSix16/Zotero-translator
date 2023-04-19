@@ -13,7 +13,7 @@ import { config } from "../package.json";
 import { getString, initLocale } from "./modules/locale";
 import { registerPrefsScripts } from "./modules/preferenceScript";
 import { ReaderFactory } from "./modules/reader";
-import { Request, UpdateRequest } from "./modules/utils/request";
+import { Request, UpdateRequest } from "./utils/request";
 
 async function onStartup() {
   await Promise.all([
@@ -80,7 +80,7 @@ async function onStartup() {
   });
   popupWin.startCloseTimer(5000);
 
-  addon.hooks.onDialogEvents("dialogExample");
+  // addon.hooks.onDialogEvents("dialogExample");
 }
 
 function onShutdown(): void {
@@ -172,6 +172,12 @@ function onReaderTextSelection(readerInstance: _ZoteroTypes.ReaderInstance) {
   updateReaderTabPanel(readerInstance, new UpdateRequest("raw", selection));
 }
 
+function onTranslateAccomplished(readerInstance: _ZoteroTypes.ReaderInstance){
+ztoolkit.log("hhhhsb");
+}
+
+// function on
+
 // Add your hooks here. For element click, etc.
 // Keep in mind hooks only do dispatch. Don't add code that does real jobs in hooks.
 // Otherwise the code would be hard to read and maintian.
@@ -184,4 +190,5 @@ export default {
   onShortcuts,
   onDialogEvents,
   onReaderTextSelection,
+  onTranslateAccomplished
 };
