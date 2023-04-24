@@ -3,6 +3,7 @@ import { config } from "../../package.json";
 import { getString } from "./locale";
 import { Request, TranslateRequest, UpdateRequest } from "../utils/request";
 import { google } from "./service/google";
+import { gpt } from "./service/gpt";
 
 export function updateReaderTabPanel(
   readerInstance: _ZoteroTypes.ReaderInstance,
@@ -15,17 +16,31 @@ export function updateReaderTabPanel(
   switch (req.type) {
     case "raw":
       (elem as HTMLTextAreaElement).value = req.value as string;
-      translate(readerInstance,new TranslateRequest("google", req.value));
+      translate(readerInstance, new TranslateRequest("google", req.value));
       break;
     case "translate":
+      (elem as HTMLDivElement).innerText = req.value as string;
+      break;
+    case "GPTask":
+      (elem as HTMLTextAreaElement).value = req.value as string;
+      translate(readerInstance, new TranslateRequest("GPT", req.value));      
+      break;
+    case"GPTanswer":
       (elem as HTMLDivElement).innerText = req.value as string;
       break;
   }
 }
 
-async function translate(readerInstance:_ZoteroTypes.ReaderInstance, req:TranslateRequest){
-  let result = await google(req);
-  updateReaderTabPanel(readerInstance,new UpdateRequest("translate",result));
+async function translate(
+  readerInstance: _ZoteroTypes.ReaderInstance,
+  req: TranslateRequest
+) {
+  let result ;
+  if(req.service == "google")
+    result = await google(req);
+  else 
+    result = await gpt(req);
+    updateReaderTabPanel(readerInstance, new UpdateRequest("GPTanswer", result));
 }
 
 export async function registerReaderTabPanel() {
@@ -63,44 +78,98 @@ export async function registerReaderTabPanel() {
             },
           },
           {
-            tag: "textarea",
-            classList: ["raw"],
-            properties: {
-              placeholder: "输入文本",
-            },
-            attributes: {
-              height: "fit-content",
-            },
-            listeners:[
+            tag: "vbox",
+            children: [
               {
-                type:"change",
-                listener:((e:Event)=>{
-                  if(e)
-                    ztoolkit.log(e as Object);                  
-                  else ztoolkit.log("nothing");
-                  addon.hooks.onTranslateAccomplished(reader);
-                })
-              }
-            ]
+                tag: "textarea",
+                classList: ["raw"],
+                properties: {
+                  placeholder: "输入文本",
+                },
+                attributes: {
+                  height: "fit-content",
+                },
+                listeners: [
+                  {
+                    type: "change",
+                    listener: (e: Event) => {
+                      if (e) ztoolkit.log(e as Object);
+                      else ztoolkit.log("nothing");
+                      
+                    },
+                  },
+                ],
+              },
+              {
+                tag: "select",
+                children: [
+                  {
+                    tag: "option",
+                    properties: {
+                      value: "谷歌翻译",
+                      innerText: "就你是谷歌翻译？",
+                    },
+                  },
+                ],
+              },
+              {
+                tag: "div",
+                classList: ["translate"],
+                properties: {
+                  innerText: "芝士翻译结果",
+                },
+              },
+              {
+                tag: "div",
+                properties: {
+                  innerText: `itemID: ${reader.itemID}.`,
+                },
+              },
+            ],
           },
           {
-            tag: "select",
-            properties: {
-              innerText: "选择你的心动嘉宾",
-            },
-          },
-          {
-            tag: "div",
-            classList: ["translate"],
-            properties: {
-              innerText: "芝士翻译结果",
-            },
-          },
-          {
-            tag: "div",
-            properties: {
-              innerText: `itemID: ${reader.itemID}.`,
-            },
+            tag: "vbox",
+            children: [
+              {
+                tag: "textarea",
+                classList: ["GPTask"],
+                properties: {
+                  placeholder: "询问GPT",
+                },
+                attributes: {
+                  height: "fit-content",
+                },
+                listeners: [
+                  {
+                    type: "change",
+                    listener: (e: Event) => {
+                      if (e) ztoolkit.log(e as Object);
+                      else ztoolkit.log("nothing");
+                      
+                    },
+                  },
+                ],
+              },
+              {
+                tag: "select",
+                children: [
+                  {
+                    tag: "option",
+                    properties: {
+                      value: "谷歌翻译",
+                      innerText: "就你是GPT？",
+                    },
+                  },
+                ],
+              },
+              {
+                tag: "div",
+                classList: ["GPTanswer"],
+                properties: {
+                  innerText: "芝士回答",
+                },
+              },
+            ],
           },
           {
             tag: "button",

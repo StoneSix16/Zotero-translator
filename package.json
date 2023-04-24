@@ -6,7 +6,7 @@
     "addonName": "Zotero Translator",
     "addonID": "translator@114514.com",
     "addonRef": "translator",
-    "addonInstance": "AddonTemplate",
+    "addonInstance": "translator",
     "releasepage": "https://github.com/StoneSix16/Zotero-translator/releases/latest/download/zotero-addon-template.xpi",
     "updaterdf": "https://raw.githubusercontent.com/windingwind/zotero-addon-template/bootstrap/update.json"
   },
@@ -37,6 +37,8 @@
   },
   "homepage": "https://github.com/StoneSix16/Zotero-translator#readme",
   "dependencies": {
+    "dotenv": "^16.0.3",
+    "openai": "^3.2.1",
     "zotero-plugin-toolkit": "^2.0.1"
   },
   "devDependencies": {

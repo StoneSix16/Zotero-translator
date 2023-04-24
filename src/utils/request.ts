@@ -8,8 +8,8 @@ export class Request{
 }
 
 export class UpdateRequest extends Request{
-    type:"raw"|"translate";
-    constructor(type:"raw"|"translate", value:Array<Object>|Object|string|undefined){
+    type:"raw"|"translate"|"GPTask"|"GPTanswer";
+    constructor(type:"raw"|"translate"|"GPTask"|"GPTanswer", value:Array<Object>|Object|string|undefined){
         super(value);
         this.type = type;
     }

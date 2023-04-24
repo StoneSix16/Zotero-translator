@@ -172,9 +172,6 @@ function onReaderTextSelection(readerInstance: _ZoteroTypes.ReaderInstance) {
   updateReaderTabPanel(readerInstance, new UpdateRequest("raw", selection));
 }
 
-function onTranslateAccomplished(readerInstance: _ZoteroTypes.ReaderInstance){
-ztoolkit.log("hhhhsb");
-}
 
 // function on
 
@@ -190,5 +187,4 @@ export default {
   onShortcuts,
   onDialogEvents,
   onReaderTextSelection,
-  onTranslateAccomplished
 };
