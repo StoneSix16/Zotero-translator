@@ -2,15 +2,7 @@ import { stringify } from "querystring";
 import { TranslateRequest } from "../../utils/request";
 
 export async function google(req: TranslateRequest) {
-  let result;
-  _google(req)
-    .then((res) => {
-      result = res;
-    })
-    .catch((err) => {
-      ztoolkit.log("ERROR", err);
-      return "nothing";
-    });
+  let result = await _google(req);
   return result;
 }
 async function _google(req: TranslateRequest) {
@@ -85,6 +77,5 @@ async function _google(req: TranslateRequest) {
       tgt += xhr.response[0][i][0];
     }
   }
-  ztoolkit.log(tgt);
   return tgt;
 }

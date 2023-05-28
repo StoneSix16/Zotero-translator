@@ -15,18 +15,19 @@ export function updateReaderTabPanel(
   let elem = con?.querySelector(`.${req.type}`);
   switch (req.type) {
     case "raw":
-      (elem as HTMLTextAreaElement).value = req.value as string;
-      translate(readerInstance, new TranslateRequest("google", req.value));
+      (elem as HTMLTextAreaElement).innerText = req.value as string;
+      if (Zotero.Prefs.get("translator.auto_translate"))
+        translate(readerInstance, new TranslateRequest("google", req.value));
       break;
     case "translate":
-      (elem as HTMLDivElement).innerText = req.value as string;
+      (elem as HTMLTextAreaElement).innerText = req.value as string;
       break;
     case "GPTask":
-      (elem as HTMLTextAreaElement).value = req.value as string;
-      translate(readerInstance, new TranslateRequest("GPT", req.value));      
+      (elem as HTMLTextAreaElement).innerText = req.value as string;
+      translate(readerInstance, new TranslateRequest("GPT", req.value));
       break;
-    case"GPTanswer":
-      (elem as HTMLDivElement).innerText = req.value as string;
+    case "GPTanswer":
+      (elem as HTMLTextAreaElement).innerText = req.value as string;
       break;
   }
 }
@@ -35,12 +36,20 @@ async function translate(
   readerInstance: _ZoteroTypes.ReaderInstance,
   req: TranslateRequest
 ) {
-  let result ;
-  if(req.service == "google")
+  let result;
+  if (req.service == "google") {
     result = await google(req);
-  else 
+    updateReaderTabPanel(
+      readerInstance,
+      new UpdateRequest("translate", result)
+    );
+  } else if (req.service == "GPT") {
     result = await gpt(req);
-    updateReaderTabPanel(readerInstance, new UpdateRequest("GPTanswer", result));
+    updateReaderTabPanel(
+      readerInstance,
+      new UpdateRequest("GPTanswer", result)
+    );
+  }
 }
 
 export async function registerReaderTabPanel() {
@@ -89,40 +98,61 @@ export async function registerReaderTabPanel() {
                 attributes: {
                   height: "fit-content",
                 },
-                listeners: [
-                  {
-                    type: "change",
-                    listener: (e: Event) => {
-                      if (e) ztoolkit.log(e as Object);
-                      else ztoolkit.log("nothing");
-                      
-                    },
-                  },
-                ],
               },
+
               {
-                tag: "select",
+                tag: "hbox",
                 children: [
                   {
-                    tag: "option",
-                    properties: {
-                      value: "谷歌翻译",
-                      innerText: "就你是谷歌翻译？",
+                    tag: "select",
+                    children: [
+                      {
+                        tag: "option",
+                        properties: {
+                          value: "谷歌翻译",
+                          innerText: "就你是谷歌翻译？",
+                        },
+                      },
+                    ],
+                  },
+                  {
+                    tag: "spacer",
+                    attributes: {
+                      flex: "2",
                     },
+                  },
+                  {
+                    tag: "button",
+                    namespace: "html",
+                    properties: {
+                      innerText: "translate",
+                    },
+                    listeners: [
+                      {
+                        type: "click",
+                        listener: () => {
+                          let raw = (
+                            panel.getElementsByClassName(
+                              "raw"
+                            )[0] as HTMLTextAreaElement
+                          ).value;
+                          translate(
+                            reader,
+                            new TranslateRequest("google", raw)
+                          );
+                          // ztoolkit.ReaderTabPanel.unregister(tabId);
+                        },
+                      },
+                    ],
                   },
                 ],
               },
               {
-                tag: "div",
+                tag: "textarea",
                 classList: ["translate"],
                 properties: {
                   innerText: "芝士翻译结果",
-                },
-              },
-              {
-                tag: "div",
-                properties: {
-                  innerText: `itemID: ${reader.itemID}.`,
+                  readOnly: true,
                 },
               },
             ],
@@ -139,16 +169,6 @@ export async function registerReaderTabPanel() {
                 attributes: {
                   height: "fit-content",
                 },
-                listeners: [
-                  {
-                    type: "change",
-                    listener: (e: Event) => {
-                      if (e) ztoolkit.log(e as Object);
-                      else ztoolkit.log("nothing");
-                      
-                    },
-                  },
-                ],
               },
               {
                 tag: "select",
@@ -163,10 +183,31 @@ export async function registerReaderTabPanel() {
                 ],
               },
               {
-                tag: "div",
+                tag: "button",
+                namespace: "html",
+                properties: {
+                  innerText: "send",
+                },
+                listeners: [
+                  {
+                    type: "click",
+                    listener: () => {
+                      let ask = (
+                        panel.getElementsByClassName(
+                          "GPTask"
+                        )[0] as HTMLTextAreaElement
+                      ).value;
+                      translate(reader, new TranslateRequest("GPT", ask));
+                    },
+                  },
+                ],
+              },
+              {
+                tag: "textarea",
                 classList: ["GPTanswer"],
                 properties: {
                   innerText: "芝士回答",
+                  readOnly:true
                 },
               },
             ],

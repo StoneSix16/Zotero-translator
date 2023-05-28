@@ -10,8 +10,7 @@ export async function gpt(req: TranslateRequest) {
 }
 async function _gpt(req: TranslateRequest) {
   let openai_key = Zotero.Prefs.get("translator.key") as any;
-  ztoolkit.log(openai_key);
-  let question = `what is ${req.value}? Please answer with less than 3 sentences` as string;
+  let question = req.value;
   const model = "gpt-3.5-turbo";
   const temperature = 0;
   const apiUrl = "https://api.openai.com/v1/chat/completions";
